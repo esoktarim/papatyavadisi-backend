@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
+// Railway otomatik olarak PORT environment variable'ını ayarlar
 const PORT = process.env.PORT || 3001;
 
 // Middleware
