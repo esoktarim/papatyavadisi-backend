@@ -105,7 +105,7 @@ const createAdminEmailTemplate = (data, language = "tr") => {
   const { project, name, phone, email, message, profession } = data;
   const date = new Date().toLocaleString(language === "tr" ? "tr-TR" : "en-US");
   const logoBase64 = getLogoBase64();
-  
+
   return `
     <!DOCTYPE html>
     <html>
@@ -224,13 +224,20 @@ const createAdminEmailTemplate = (data, language = "tr") => {
               <tr>
                 <td style="background-color: #f9f9f9; padding: 15px; text-align: center; border-top: 2px solid #C7A664;">
                   <p style="margin: 0; color: #666666; font-size: 11px;">
-                    ${language === "tr" 
-                      ? "Bu email Papatya Vadisi web sitesinden otomatik olarak gönderilmiştir." 
-                      : "This email was automatically sent from the Papatya Vadisi website."}
+                    ${language === "tr"
+      ? "Bu email Papatya Vadisi web sitesinden otomatik olarak gönderilmiştir."
+      : "This email was automatically sent from the Papatya Vadisi website."}
                   </p>
                   <p style="margin: 5px 0 0 0; color: #999999; font-size: 10px;">
                     Kadirli, Osmaniye
                   </p>
+                  
+                  <!-- DEBUG INFO - CANLI DEPLOYMENT KONTROLU -->
+                  <div style="margin-top: 15px; padding: 10px; background: #eee; border: 1px dashed #666; text-align: left; font-family: monospace; font-size: 10px;">
+                    <strong>DEBUG INFO:</strong><br>
+                    Profession Received: "${profession || 'UNDEFINED'}"<br>
+                    Raw Data Keys: ${Object.keys(data).join(', ')}
+                  </div>
                 </td>
               </tr>
             </table>
@@ -244,7 +251,7 @@ const createAdminEmailTemplate = (data, language = "tr") => {
 
 const createThankYouEmailTemplate = (data, language = "tr") => {
   const { name, project } = data;
-  
+
   return `
     <!DOCTYPE html>
     <html>
@@ -278,15 +285,15 @@ const createThankYouEmailTemplate = (data, language = "tr") => {
                   
                   <div style="background-color: #fafafa; padding: 20px; border-radius: 8px; border-left: 4px solid #C7A664; margin-bottom: 25px;">
                     <p style="margin: 0 0 12px 0; color: #333333; font-size: 15px; line-height: 1.6;">
-                      ${language === "tr" 
-                        ? "Papatya Vadisi iletişim formunuz tarafımıza başarıyla ulaşmıştır. Talebiniz en kısa sürede değerlendirilecek ve sizinle iletişime geçilecektir." 
-                        : "Your contact form for Papatya Vadisi has been successfully received. Your request will be evaluated as soon as possible and we will contact you."}
+                      ${language === "tr"
+      ? "Papatya Vadisi iletişim formunuz tarafımıza başarıyla ulaşmıştır. Talebiniz en kısa sürede değerlendirilecek ve sizinle iletişime geçilecektir."
+      : "Your contact form for Papatya Vadisi has been successfully received. Your request will be evaluated as soon as possible and we will contact you."}
                     </p>
                     
                     <p style="margin: 12px 0 0 0; color: #555555; font-size: 14px; line-height: 1.5;">
-                      ${language === "tr" 
-                        ? "Bize güvendiğiniz için teşekkür ederiz. Size en iyi hizmeti sunmak için buradayız." 
-                        : "Thank you for your trust. We are here to provide you with the best service."}
+                      ${language === "tr"
+      ? "Bize güvendiğiniz için teşekkür ederiz. Size en iyi hizmeti sunmak için buradayız."
+      : "Thank you for your trust. We are here to provide you with the best service."}
                     </p>
                   </div>
                   
@@ -352,9 +359,9 @@ const createThankYouEmailTemplate = (data, language = "tr") => {
                     Papatya Vadisi
                   </p>
                   <p style="margin: 0 0 10px 0; color: #aaaaaa; font-size: 11px;">
-                    ${language === "tr" 
-                      ? "Doğanın kalbinde modern yaşam" 
-                      : "Modern life in the heart of nature"}
+                    ${language === "tr"
+      ? "Doğanın kalbinde modern yaşam"
+      : "Modern life in the heart of nature"}
                   </p>
                   <p style="margin: 0; color: #888888; font-size: 10px;">
                     © 2025 Papatya Vadisi. ${language === "tr" ? "Tüm hakları saklıdır." : "All rights reserved."}
@@ -387,9 +394,9 @@ app.post("/api/contact", async (req, res) => {
 
     // Validation
     if (!phone && !email) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Telefon veya email gereklidir" 
+      return res.status(400).json({
+        success: false,
+        message: "Telefon veya email gereklidir"
       });
     }
 
@@ -409,13 +416,13 @@ app.post("/api/contact", async (req, res) => {
 
     // Email to user (thank you email) - only if email is provided AND valid
     let userMailOptions = null;
-    
+
     if (validEmail) {
       userMailOptions = {
         from: `"Papatya Vadisi" <${process.env.EMAIL_USER || "papatyavadisi80@gmail.com"}>`,
         to: email,
-        subject: language === "tr" 
-          ? "Papatya Vadisi - Mesajınız İletildi!" 
+        subject: language === "tr"
+          ? "Papatya Vadisi - Mesajınız İletildi!"
           : "Papatya Vadisi - Your Message Has Been Received!",
         html: createThankYouEmailTemplate({ name, project }, language),
       };
@@ -432,7 +439,7 @@ app.post("/api/contact", async (req, res) => {
         await transporter.sendMail(adminMailOptions);
         console.log("✅ Admin email sent successfully to papatyavadisi80@gmail.com");
         console.log("📧 Form details:", { project, name, phone, email });
-        
+
         // Send thank you email to user if email is provided AND valid
         if (userMailOptions) {
           try {
@@ -455,10 +462,10 @@ app.post("/api/contact", async (req, res) => {
       }
     } else {
       // Email not configured, but form submission is still logged
-      console.log("📝 Form submission received (email not configured):", { 
-        project, 
-        name, 
-        phone, 
+      console.log("📝 Form submission received (email not configured):", {
+        project,
+        name,
+        phone,
         email,
         profession,
         timestamp: new Date().toISOString()
@@ -469,8 +476,8 @@ app.post("/api/contact", async (req, res) => {
     // Always return success - form submission is received
     res.status(200).json({
       success: true,
-      message: language === "tr" 
-        ? "Mesajınız başarıyla gönderildi. En kısa sürede size ulaşacağız." 
+      message: language === "tr"
+        ? "Mesajınız başarıyla gönderildi. En kısa sürede size ulaşacağız."
         : "Your message has been sent successfully. We will contact you shortly.",
     });
   } catch (error) {
@@ -500,7 +507,7 @@ app.listen(PORT, () => {
   console.log(`\n📡 API Endpoints:`);
   console.log(`   POST http://localhost:${PORT}/api/contact - İletişim formu`);
   console.log(`   GET  http://localhost:${PORT}/api/health - Health check`);
-  
+
   if (process.env.EMAIL_PASS) {
     console.log(`\n✅ Email password configured - Email sending is ENABLED`);
     console.log(`📧 Emails will be sent to: papatyavadisi80@gmail.com`);
