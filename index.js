@@ -497,27 +497,30 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log("\n" + "=".repeat(50));
-  console.log("🚀 Papatya Vadisi Backend Server");
-  console.log("=".repeat(50));
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`📧 Email user: ${process.env.EMAIL_USER || "papatyavadisi80@gmail.com"}`);
-  console.log(`\n📡 API Endpoints:`);
-  console.log(`   POST http://localhost:${PORT}/api/contact - İletişim formu`);
-  console.log(`   GET  http://localhost:${PORT}/api/health - Health check`);
+// Start server if not running on Vercel
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log("\n" + "=".repeat(50));
+    console.log("🚀 Papatya Vadisi Backend Server");
+    console.log("=".repeat(50));
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📧 Email user: ${process.env.EMAIL_USER || "papatyavadisi80@gmail.com"}`);
+    console.log(`\n📡 API Endpoints:`);
+    console.log(`   POST http://localhost:${PORT}/api/contact - İletişim formu`);
+    console.log(`   GET  http://localhost:${PORT}/api/health - Health check`);
 
-  if (process.env.EMAIL_PASS) {
-    console.log(`\n✅ Email password configured - Email sending is ENABLED`);
-    console.log(`📧 Emails will be sent to: papatyavadisi80@gmail.com`);
-  } else {
-    console.log(`\n⚠️  Email password NOT configured - Email sending is DISABLED`);
-    console.log(`💡 To enable email:`);
-    console.log(`   1. Create .env file in server/ directory`);
-    console.log(`   2. Add: EMAIL_PASS=your_gmail_app_password`);
-    console.log(`   3. See EMAIL_SETUP.md for detailed instructions`);
-  }
-  console.log("\n" + "=".repeat(50) + "\n");
-});
+    if (process.env.EMAIL_PASS) {
+      console.log(`\n✅ Email password configured - Email sending is ENABLED`);
+      console.log(`📧 Emails will be sent to: papatyavadisi80@gmail.com`);
+    } else {
+      console.log(`\n⚠️  Email password NOT configured - Email sending is DISABLED`);
+      console.log(`💡 To enable email:`);
+      console.log(`   1. Create .env file in server/ directory`);
+      console.log(`   2. Add: EMAIL_PASS=your_gmail_app_password`);
+      console.log(`   3. See EMAIL_SETUP.md for detailed instructions`);
+    }
+    console.log("\n" + "=".repeat(50) + "\n");
+  });
+}
 
+export default app;
