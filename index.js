@@ -102,7 +102,7 @@ const getLogoBase64 = () => {
 
 // Helper function to create email templates
 const createAdminEmailTemplate = (data, language = "tr") => {
-  const { project, name, phone, email, message } = data;
+  const { project, name, phone, email, message, profession } = data;
   const date = new Date().toLocaleString(language === "tr" ? "tr-TR" : "en-US");
   const logoBase64 = getLogoBase64();
   
@@ -182,6 +182,17 @@ const createAdminEmailTemplate = (data, language = "tr") => {
                         <a href="mailto:${email}" style="color: #333333; text-decoration: none; font-size: 14px;">
                           ${email}
                         </a>
+                      </td>
+                    </tr>
+                    ` : ""}
+
+                    ${profession ? `
+                    <tr>
+                      <td style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <strong style="color: #C7A664; font-size: 12px; text-transform: uppercase; display: inline-block; min-width: 80px;">
+                          ${language === "tr" ? "MESLEK" : "PROFESSION"}:
+                        </strong>
+                        <span style="color: #333333; font-size: 14px;">${profession}</span>
                       </td>
                     </tr>
                     ` : ""}
@@ -372,7 +383,7 @@ const isValidEmail = (email) => {
 // Contact form endpoint
 app.post("/api/contact", async (req, res) => {
   try {
-    const { project, phone, name, email, message, language = "tr" } = req.body;
+    const { project, phone, name, email, message, profession, language = "tr" } = req.body;
 
     // Validation
     if (!phone && !email) {
@@ -393,7 +404,7 @@ app.post("/api/contact", async (req, res) => {
       to: "papatyavadisi80@gmail.com",
       replyTo: email || process.env.EMAIL_USER || "papatyavadisi80@gmail.com",
       subject: `🔔 ${language === "tr" ? "Yeni İletişim Formu" : "New Contact Form"} - ${project || (language === "tr" ? "Genel" : "General")}`,
-      html: createAdminEmailTemplate({ project, name, phone, email, message }, language),
+      html: createAdminEmailTemplate({ project, name, phone, email, message, profession }, language),
     };
 
     // Email to user (thank you email) - only if email is provided AND valid
@@ -439,7 +450,7 @@ app.post("/api/contact", async (req, res) => {
         }
       } catch (emailError) {
         console.error("⚠️ Admin email send error (form data still received):", emailError.message);
-        console.log("📝 Form submission received:", { project, name, phone, email });
+        console.log("📝 Form submission received:", { project, name, phone, email, profession });
         // Continue even if email fails - form data is still valuable
       }
     } else {
@@ -449,6 +460,7 @@ app.post("/api/contact", async (req, res) => {
         name, 
         phone, 
         email,
+        profession,
         timestamp: new Date().toISOString()
       });
       console.log("💡 To enable email notifications, configure EMAIL_PASS in .env file");
