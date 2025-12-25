@@ -231,13 +231,6 @@ const createAdminEmailTemplate = (data, language = "tr") => {
                   <p style="margin: 5px 0 0 0; color: #999999; font-size: 10px;">
                     Kadirli, Osmaniye
                   </p>
-                  
-                  <!-- DEBUG INFO - CANLI DEPLOYMENT KONTROLU -->
-                  <div style="margin-top: 15px; padding: 10px; background: #eee; border: 1px dashed #666; text-align: left; font-family: monospace; font-size: 10px;">
-                    <strong>DEBUG INFO:</strong><br>
-                    Profession Received: "${profession || 'UNDEFINED'}"<br>
-                    Raw Data Keys: ${Object.keys(data).join(', ')}
-                  </div>
                 </td>
               </tr>
             </table>
